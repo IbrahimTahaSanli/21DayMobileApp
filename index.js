@@ -1,19 +1,13 @@
-/**
- * @format
- */
-
 import React ,{Component} from "react";
 import {
-    ActivityIndicator, 
+    ActivityIndicator,
     AppRegistry, 
     View,
     StyleSheet,
     Text
 } from 'react-native';
 
-
 import {name as appName,version} from './app.json';
-
 
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -29,8 +23,6 @@ const Stack = createStackNavigator();
 
 class loadingScreen extends Component{
     styles = StyleSheet.create({
-        loader:{
-        },
         cont:{
             flex:1,
             flexDirection:"column",
@@ -71,6 +63,7 @@ class loadingScreen extends Component{
         if(this.isfileexist){
             try{
                 this.treeData = JSON.parse(await RNFS.readFile(this.currentDir+"/data.json","utf8"));
+                console.log("index66: "+JSON.stringify(this.treeData));
                 this.props.navigation.navigate("Home",{treeData:this.treeData,currentFile:this.currentDir+"/data.json"});
             }
             catch{
@@ -103,6 +96,6 @@ export default function Navigator(){
       </NavigationContainer>
     );
 };
-    
+  
 
 AppRegistry.registerComponent(appName, () => Navigator);
