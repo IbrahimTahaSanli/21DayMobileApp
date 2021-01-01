@@ -5,6 +5,7 @@ import{
     View,
     TouchableOpacity,
     ViewPropTypes,
+    Image
 } from "react-native";
 
 import Time from "./Time.js";
@@ -13,6 +14,7 @@ import BackgroundTimer from "react-native-background-timer";
 
 import PropTypes from "prop-types";
 
+play = require("./Play.png");
 
 class Kronometer extends Component{
     constructor(props){
@@ -53,6 +55,13 @@ class Kronometer extends Component{
             alignItems:"center",
             justifyContent:"center",
             flex:1,
+            padding:10
+        },
+        buttonImage:{
+          flex:1,
+          width:"100%",
+          height:"100%",
+          resizeMode:"center",
         }
 
 
@@ -73,15 +82,15 @@ class Kronometer extends Component{
             </View>
             <View style={this.style.buttonContainer}>
                 <TouchableOpacity style={[this.props.buttonBackground,this.style.buttonStyle,Kronometer.propTypes.backgroundStyle]} onPress={this.start }>
-                  <Text style={this.props.textStyle}>Play</Text>
+                  <Image style={this.style.buttonImage} source={require("./Play.png")}></Image>
                 </TouchableOpacity>
     
                 <TouchableOpacity style={[this.props.buttonBackground,this.style.buttonStyle,Kronometer.propTypes.backgroundStyle]} onPress={this.pause} >
-                  <Text style={this.props.textStyle}>Pause</Text>
+                  <Image style={this.style.buttonImage} source={require("./Pause.png")}></Image>
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={[this.props.buttonBackground,this.style.buttonStyle,Kronometer.propTypes.backgroundStyle]} onPress={this.stop}>
-                  <Text style={this.props.textStyle}>Stop</Text>
+                  <Image style={this.style.buttonImage} source={require("./Stop.png")}></Image>
                 </TouchableOpacity>
             </View>
           </View>);
@@ -92,14 +101,17 @@ class Kronometer extends Component{
     }
 
     pause(){
-        if(this.isTimerEnabled){
+      if(this.timer==null){
+        this.props.toast("Timer Hasn't Started")
+      }
+      else if(this.isTimerEnabled){
           BackgroundTimer.stopBackgroundTimer();
           this.isTimerEnabled=false;
         }
-        else{
-          BackgroundTimer.runBackgroundTimer(this.setTimeing,1000);
-          this.isTimerEnabled = true;
-        }
+      else{
+        BackgroundTimer.runBackgroundTimer(this.setTimeing,1000);
+        this.isTimerEnabled = true;
+      }
       }
     
       start(){
@@ -109,11 +121,26 @@ class Kronometer extends Component{
           this.isTimerEnabled = true;
           this.timer = 1;
         }
+        else if(this.timer == 1){
+          this.props.toast("Can't Start Twice");
+        }
       }
     
       stop(){
-        if(this.timer ==1){
+        if(this.timer==null ){
+          this.props.toast("Timer Hasn't Started")
+        }
+        else if(this.kronoTime.hour<1 && this.kronoTime.minute < 5 ){
+          this.props.toast("Less Than 5 Minute. This Session Not Saved");
+          this.setState({kronometerTimer:"00:00:00"})
           BackgroundTimer.stopBackgroundTimer();
+          this.kronoTime = new Time()
+          this.isTimerEnabled = false;
+          this.timer = null;
+        }
+        else if(this.timer == 1){
+          BackgroundTimer.stopBackgroundTimer();
+          this.setState({kronometerTimer:"00:00:00"})
           this.props.returnFunc(this.kronoTime.toString());
           this.isTimerEnabled = false;
           this.timer = null;

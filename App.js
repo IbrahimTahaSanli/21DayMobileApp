@@ -5,7 +5,8 @@ import {
   View,
   Text,
   Image,
-  Button
+  Button,
+  Animated
 } from 'react-native';
 
 import responsive_font_size from "./responsive-font-size.js";
@@ -39,6 +40,7 @@ class Appi extends Component{
     this.currentFile = props.route.params.currentFile;
 
     this.handleData = this.handleData.bind(this);
+    this.toast = this.toast.bind(this)
 
     this.styles = StyleSheet.create({
       background:{
@@ -60,18 +62,15 @@ class Appi extends Component{
         padding:5
       },
       header:{
-
       },
       picture:{
-        
         flex:1,
         width:"100%",
         height:"100%",
         resizeMode:"stretch",
         alignSelf:"center",
         backgroundColor: 'transparent',
-        backfaceVisibility:"visible"
-
+        backfaceVisibility:"visible",
       },
       dayHasBeenDone:{
         flex:1,
@@ -87,6 +86,7 @@ class Appi extends Component{
         margin:4
       },
       textt:{
+        fontFamily:"Amigos",
         fontSize:this.fontSizer.ViaWidth(15),
         textAlign:"center",
         color: mainPageText,
@@ -122,8 +122,8 @@ class Appi extends Component{
         marginRight:4
       }
     });
-  
-    this.state = {kronometerTimer:"00:00:00"};
+
+    this.state = {toast:(<View></View>),fadeAnim:new Animated.Value(0)};
   }
 
   componentWillUnmount(){
@@ -143,7 +143,7 @@ class Appi extends Component{
           <Text style={this.styles.textt}>Sum:{this.treeData.labels["Sum: "]}</Text>
         </View>);
 
-        this.tool = <Kronometer buttonBackground={this.styles.kronometerButton} backgroundStyle={this.styles.backgroundStyle} textStyle={this.styles.textt} buttonBackground={this.styles.backgroundStyle} returnFunc={this.handleData}></Kronometer>;
+        this.tool = <Kronometer buttonBackground={this.styles.kronometerButton} backgroundStyle={this.styles.backgroundStyle} textStyle={this.styles.textt} buttonBackground={this.styles.backgroundStyle} returnFunc={this.handleData} toast={this.toast}></Kronometer>;
         break;
       case "Counter":
         this.infoPanel = (<View style={[this.styles.row,this.styles.Information,this.styles.backgroundStyle,{alignSelf:"center"}]}>
@@ -158,16 +158,24 @@ class Appi extends Component{
     
     return (
     <View style={[this.styles.background,this.styles.backgroundPadding]}>
+
+      {this.state.toast}
+
       <View style={[this.styles.row,this.styles.row1,this.styles.backgroundStyle]}>
-        <Text style={[this.styles.header,this.styles.textt]}>{this.treeData.getTreeName()}</Text>
+        <Text style={[this.styles.header,this.styles.textt]}>{this.treeData.getTreeName().toUpperCase()}</Text>
       </View>
+
+      
       <View style={[this.styles.row,this.styles.alignIt]}>
         <View style={[this.styles.backgroundStyle,this.styles.dayHasBeenDone,this.styles.row,this.styles.mar]}><Text numberOfLines={1} style={[this.styles.textt,this.styles.dayHasBeenDoneText]} >{this.treeData.getDayHasBeenDone()+1}</Text></View>
-        <View style={[this.styles.backgroundStyle,this.styles.dayHasBeenDone,this.styles.row,this.styles.mar]} ><Image style={this.styles.picture} source={{uri:"https://test001001.azurewebsites.net/"+(this.treeData.getDayHasBeenDone()+1)+".png"}}></Image></View>
+        <View style={[this.styles.backgroundStyle,this.styles.dayHasBeenDone,this.styles.row,this.styles.mar]} >
+          <Image style={this.styles.picture} source={{uri:"http://test001001.azurewebsites.net/"+(this.treeData.getDayHasBeenDone()+1)+".png"}}></Image>
+        </View>
       </View>
       
       {this.infoPanel}
       {this.tool}
+
       <View style={[this.styles.row,this.styles.row1]}>
         <Button title="New" color={kronometerButtonBackground} onPress={()=>{this.props.navigation.push("signup",{currentDir:this.currentFile.replace("/data.json",""),isCorrupted:false,isNew:true});}}></Button>
       </View>
@@ -181,6 +189,22 @@ class Appi extends Component{
     RNFS.writeFile(this.currentFile,JSON.stringify(this.treeRawData),"utf8");
     this.treeData = new Tree(this.treeRawData);
     this.forceUpdate();
+  }
+
+  toast(str){
+    this.setState({toast:(
+      <Animated.View style={{opacity:this.state.fadeAnim,width:"100%",height:"100%",position:"absolute",zIndex:100,alignSelf:"center",justifyContent:"center"}}>
+        <View style={{backgroundColor:"#f0f0f0a0",padding:this.fontSizer.ViaWidth(10),borderRadius:100}}>
+          <Text style={{fontSize:this.fontSizer.ViaWidth(10),textAlign:"center"}}>{str}</Text>
+        </View>
+      </Animated.View>
+    )})
+    Animated.timing(this.state.fadeAnim,{toValue:1,duration:1000,useNativeDriver: true}).start();
+    setTimeout(this._toast.bind(this),3000);
+  }
+
+  _toast(){
+    Animated.timing(this.state.fadeAnim,{toValue:0,duration:1000,useNativeDriver: true}).start(()=>{this.setState({toast:(<View></View>)});});
   }
 
   
@@ -228,3 +252,5 @@ class Tree{
 }
 
 
+
+      

@@ -63,7 +63,6 @@ class loadingScreen extends Component{
         if(this.isfileexist){
             try{
                 this.treeData = JSON.parse(await RNFS.readFile(this.currentDir+"/data.json","utf8"));
-                console.log("index66: "+JSON.stringify(this.treeData));
                 this.props.navigation.navigate("Home",{treeData:this.treeData,currentFile:this.currentDir+"/data.json"});
             }
             catch{

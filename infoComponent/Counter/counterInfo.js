@@ -29,7 +29,6 @@ class counterInfo extends dataInterface{
     calcSum(){
         sum = 0;
         Object.keys(this.infoOfDays).map( function(index){
-            console.log("counterInfo:29 " + JSON.stringify(this.infoOfDays)    + "    " + index);
             sum += this.infoOfDays[index];
         }.bind(this))
 

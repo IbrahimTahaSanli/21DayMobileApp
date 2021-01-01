@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, ViewPropTypes, TouchableOpacity} from "react-native";
+import { StyleSheet, View, Text, ViewPropTypes, TouchableOpacity, Image} from "react-native";
 import PropTypes from "prop-types";
 
 class Counter extends Component{
@@ -29,10 +29,17 @@ class Counter extends Component{
                 width:"100%",
 
             },
-            buttonStyle:{
+            buttonImage:{
                 flex:1,
+                width:"100%",
+                height:"100%",
+                resizeMode:"center",
+              },
+            buttonStyle:{
                 alignItems:"center",
-                justifyContent:"center",  
+                justifyContent:"center",
+                flex:1,
+                padding:10
             },
         });
 
@@ -50,7 +57,6 @@ class Counter extends Component{
 
 
     render(){
-        console.log("Counter:56 " , JSON.stringify(this.props));
         return(
             <View style = {this.style.topContainer}>
                 <View style={[this.style.topPanel,this.props.backgroundStyle]}>
@@ -59,15 +65,15 @@ class Counter extends Component{
 
                 <View style={this.style.bottomPane}>
                     <TouchableOpacity style={[this.style.buttonStyle,this.props.buttonBackground]} onPress={this.inc}> 
-                        <Text style={this.props.textStyle}>Inc</Text> 
+                        <Image style={this.style.buttonImage} source={require("./inc.png")}></Image> 
                     </TouchableOpacity>
 
                     <TouchableOpacity style={[this.style.buttonStyle,this.props.buttonBackground]} onPress={this.dec}> 
-                        <Text style={this.props.textStyle}>Dec</Text> 
+                        <Image style={this.style.buttonImage} source={require("./dec.png")}></Image> 
                     </TouchableOpacity>
 
                     <TouchableOpacity style={[this.style.buttonStyle,this.props.buttonBackground]} onPress={this.save}>
-                        <Text style={this.props.textStyle}>Save</Text>
+                        <Image style={this.style.buttonImage} source={require("./save.png")}></Image> 
                     </TouchableOpacity>
                 </View>
 
